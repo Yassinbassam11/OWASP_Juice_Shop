@@ -1,0 +1,880 @@
+Before we get into the actual hacking part, it's good to have a look around. In Burp, set the Intercept mode to off and then browse around the site. This allows Burp to log different requests from the server that may be helpful later. 
+
+This is called walking through the application, which is also a form of reconnaissance!
+
+by clicking on the Apple Juice product, shows us the Admin email!
+
+admin@juice-sh.op
+
+Click on the magnifying glass in the top right of the application will pop out a search bar.
+We can now see the search parameter after the /#/search? the letter q
+
+Jim did a review on the Green Smoothie product. We can see that he mentions a replicator. 
+If we google "replicator" we will get the results indicating that it is from a TV show called Star Trek
+
+from Green Smoothie
+jim@juice-sh.op
+
+
+
+
+This task will be focusing on injection vulnerabilities. Injection vulnerabilities are quite dangerous to a company as they can potentially cause downtime and/or loss of data. Identifying injection points within a web application is usually quite simple, as most of them will return an error. There are many types of injection attacks, some of them are:
+
+SQL Injection
+SQL Injection is when an attacker enters a malicious or malformed query to either retrieve or tamper data from a database. And in some cases, log into accounts.
+Command Injection
+Command Injection is when web applications take input or user-controlled data and run them as system commands. An attacker may tamper with this data to execute their own system commands. This can be seen in applications that perform misconfigured ping tests. 
+Email Injection
+Email injection is a security vulnerability that allows malicious users to send email messages without prior authorization by the email server. These occur when the attacker adds extra data to fields, which are not interpreted by the server correctly. 
+
+
+
+
+
+After we navigate to the login page, enter some data into the email and password fields.
+ Before clicking submit, make sure Intercept mode is on.
+This will allow us to see the data been sent to the server!
+We will now change the "a" next to the email to: ' or 1=1-- and forward it to the server.
+
+You successfully solved a challenge: Login Admin (Log in with the administrator's user account.)
+690fa3247a99d651e0b26f947baf0b79b4f404a9
+
+Similar to what we did in Question #1, we will now log into Bender's account! Capture the login request again, but this time we will put: bender@juice-sh.op'-- as the email. 
+from banana juice
+bender@juice-sh.op
+
+You successfully solved a challenge: Login Bender (Log in with Bender's user account.)
+5ff5052e879e6fef64124e64c82c84ebc809c6c4
+
+
+
+In this task, we will look at exploiting authentication through different flaws. When talking about flaws within authentication, we include mechanisms that are vulnerable to manipulation. These mechanisms, listed below, are what we will be exploiting. 
+Weak passwords in high privileged accounts
+Forgotten password pages
+ More information: Broken Authentication
+
+A failed request will receive a 401 Unauthorized   
+Whereas a successful request will return a 200 OK. 
+
+admin@juice-sh.op
+admin123
+
+You successfully solved a challenge: Password Strength (Log in with the administrator's user credentials without previously changing them or applying SQL Injection.)
+ff4aebffe31b0ffdea9bdd0207a16a3c01ac6c56
+
+
+Reset Jim's password!
+Looks like his brother's middle name is Samuel
+Inputting that into the Forgot Password page allows you to successfully change his password.
+You can change it to anything you want!
+
+You successfully solved a challenge: Reset Jim's Password (Reset Jim's password via the Forgot Password mechanism with the original answer to his security question.)
+3c3e2d6ef99b733b947e92f8e2a9ed08bf57ea63
+
+jim@juice-sh.op
+Hacker_123
+
+
+A web application should store and transmit sensitive data safely and securely. But in some cases, the developer may not correctly protect their sensitive data, making it vulnerable.
+Most of the time, data protection is not applied consistently across the web application making certain pages accessible to the public. Other times information is leaked to the public without the knowledge of the developer, making the web application vulnerable to an attack. 
+
+Navigate to the About Us page, and hover over the "Check out our terms of use".
+You will see that it links to  http://10.114.140.87 (opens in new tab)/ftp/legal.md (opens in new tab). Navigating to that /ftp/ directory reveals that it is exposed to the public!
+We will download the acquisitions.md and save it. It looks like there are other files of interest here as well.
+After downloading it, navigate to the home page to receive the flag!
+
+
+You successfully solved a challenge: Confidential Document (Access a confidential document.)
+8d2072c6b0a455608ca1a293dc0c9579883fc6a5
+
+
+Log into MC SafeSearch's account!
+After watching the video there are certain parts of the song that stand out.
+He notes that his password is "Mr. Noodles" but he has replaced some "vowels into zeros", meaning that he just replaced the o's into 0's.
+We now know the password to the mc.safesearch@juice-sh.op account is "Mr. N00dles"
+
+from Juice Shop "Permafrost" 2020 Edition
+mc.safesearch@juice-sh.op
+
+mc.safesearch@juice-sh.op
+Mr. N00dles
+
+You successfully solved a challenge: Login MC SafeSearch (Log in with MC SafeSearch's original user credentials without applying SQL Injection or any other bypass.)
+bb105418e73708ceccf1a7b2491f434b8f5230e4
+
+
+We will now go back to the http://10.114.140.87 (opens in new tab) /ftp/ folder and try to download package.json.bak. But it seems we are met with a 403, which says that only .md and .pdf files can be downloaded.
+
+OWASP Juice Shop (Express ^4.21.0)
+403 Error: Only .md and .pdf files are allowed!
+
+To get around this, we will use a character bypass called "Poison Null Byte". A Poison Null Byte looks like this: %00.
+Note: as we can download it using the url, we will need to encode this into a url encoded format.
+The Poison Null Byte will now look like this: %2500. Adding this and then a .md to the end will bypass the 403 error!
+
+
+Note: this flags not in the Thm room and I got it by luck
+You successfully solved a challenge: Error Handling (Provoke an error that is neither very gracefully nor consistently handled.)
+9c297196ecf8890bc1e900fcf3aebae8c9f9880a
+You successfully solved a challenge: Forgotten Developer Backup (Access a developer's forgotten backup file.)
+dad737329153068527159005db4eb139e86e76ba
+
+
+You successfully solved a challenge: Poison Null Byte (Bypass a security control with a Poison Null Byte to access a file not meant for your eyes.)
+cfdeea14e8f01b4952722fd0e4a77f1928593c9a
+
+
+Modern-day systems will allow for multiple users to have access to different pages. Administrators most commonly use an administration page to edit, add and remove different elements of a website. You might use these when you are building a website with programs such as Weebly or Wix.  
+When Broken Access Control exploits or bugs are found, it will be categorised into one of two types:
+Horizontal Privilege Escalation
+Occurs when a user can perform an action or access data of another user with the same level of permissions.
+Vertical Privilege Escalation
+Occurs when a user can perform an action or access data of another user with a higher level of permissions.
+
+
+Access the administration page!
+
+First, we are going to open the Debugger on Firefox. 
+(Or Sources on Chrome.)
+This can be done by navigating to it in the Web Developers menu. 
+
+We are then going to refresh the page and look for a javascript file for main-es2015.js
+We will then go to that page at: http://10.114.140.87 (opens in new tab)/main-es2015.js
+
+Now search for the term "admin" 
+You will come across a couple of different words containing "admin" but the one we are looking for is "path: administration"
+
+This hints towards a page called "/#/administration" as can be seen by the about path a couple lines below, but going there while not logged in doesn't work. 
+As this is an Administrator page, it makes sense that we need to be in the Admin account in order to view it.
+A good way to stop users from accessing this is to only load parts of the application that need to be used by them. This stops sensitive information such as an admin page from been leaked or viewed.
+
+You successfully solved a challenge: Admin Section (Access the administration section of the store.)
+71aeb3b0bf01cc6e488f0207bb62f79b41454a87
+
+
+View another user's shopping basket!
+
+Login to the Admin account and click on 'Your Basket'. Make sure Burp is running so you can capture the request!
+Now, we are going to change the number 1 after /basket/ to 2
+
+
+You successfully solved a challenge: View Basket (View another user's shopping basket.)
+e6982b34b6734ceadd28e5019b251f929a80b815
+
+
+Remove all 5-star reviews!
+Navigate to the   (opens in new tab)http://10.114.140.87 (opens in new tab)/#/administration (opens in new tab) page again and click the bin icon next to the review with 5 stars!
+
+You successfully solved a challenge: Five-Star Feedback (Get rid of all 5-star customer feedback.)
+78231b75c0b2180b7e964dcbb1ab3c3f58639f2e
+
+
+
+
+
+XSS or Cross-site scripting is a vulnerability that allows attackers to run javascript in web applications. These are one of the most found bugs in web applications. Their complexity ranges from easy to extremely hard, as each web application parses the queries in a different way. 
+There are three major types of XSS attacks:
+DOM (Special)
+DOM XSS (Document Object Model-based Cross-site Scripting) uses the HTML environment to execute malicious javascript. This type of attack commonly uses the <script></script> HTML tag.
+Persistent (Server-side)
+Persistent XSS is javascript that is run when the server loads the page containing it. These can occur when the server does not sanitise the user data when it is uploaded to a page. These are commonly found on blog posts. 
+Reflected (Client-side)
+Reflected XSS is javascript that is run on the client-side end of the web application. These are most commonly found when the server doesn't sanitise search data. 
+
+Perform a DOM XSS!
+
+We will be using the iframe element with a javascript alert tag: 
+<iframe src="javascript:alert(`xss`)"> 
+Inputting this into the search bar will trigger the alert.
+
+Note that we are using iframe which is a common HTML element found in many web applications, there are others which also produce the same result. 
+This type of XSS is also called XFS (Cross-Frame Scripting), is one of the most common forms of detecting XSS within web applications.
+Websites that allow the user to modify the iframe or other DOM elements will most likely be vulnerable to XSS.   
+Why does this work?
+It is common practice that the search bar will send a request to the server in which it will then send back the related information, but this is where the flaw lies. Without correct input sanitation, we are able to perform an XSS attack against the search bar. 
+
+You successfully solved a challenge: DOM XSS (Perform a DOM XSS attack with <iframe src="javascript:alert(`xss`)">.)
+4a31a4fe0954199566e360a873802bf64d0d0a84
+
+
+Perform a persistent XSS!
+
+First, login to the admin account.
+We are going to navigate to the "Last Login IP" page for this attack.
+As it logs the 'last' login IP we will now logout so that it logs the 'new' IP.
+
+Make sure that Burp intercept is on, so it will catch the logout request.
+We will then head over to the Headers tab where we will add a new header:
+True-Client-IP	<iframe src="javascript:alert(`xss`)">
+
+Then forward the request to the server!
+When signing back into the admin account and navigating to the Last Login IP page again, we will see the XSS alert!
+
+Why do we have to send this Header?
+The True-Client-IP  header is similar to the X-Forwarded-For header, both tell the server or proxy what the IP of the client is. Due to there being no sanitation in the header we are able to perform an XSS attack. 
+
+
+You successfully solved a challenge: HTTP-Header XSS (Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> through an HTTP header.)
+c37da14686b69a220fd9febd09bb9593e7d0539f
+
+
+Perform a reflected XSS!
+
+First, we are going to need to be on the right page to perform the reflected XSS!
+Login into the admin account and navigate to the 'Order History' page. 
+From there you will see a "Truck" icon, clicking on that will bring you to the track result page. You will also see that there is an id paired with the order.   
+We will use the iframe XSS, <iframe src="javascript:alert(`xss`)">, in the place of the 5267-f73dcd000abcc353
+After submitting the URL, refresh the page and you will then get an alert saying XSS!
+Why does this work?
+The server will have a lookup table or database (depending on the type of server) for each tracking ID. As the 'id' parameter is not sanitised before it is sent to the server, we are able to perform an XSS attack.  
+
+You successfully solved a challenge: Reflected XSS (Perform a reflected XSS attack with <iframe src="javascript:alert(`xss`)">.)
+305021787d3e9cd9cebc057a021c2504550bb3b6
+
+
+If you wish to tackle some of the harder challenges that were not covered within this room, check out the /#/score-board/ section on Juice-shop. Here you can see your completed tasks as well as other tasks in varying difficulty.
+
+
+You successfully solved a challenge: Score Board (Find the carefully hidden 'Score Board' page.)
+2614339936e8282e2f820f023d4d998a1f95e02a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Miscellaneous
+Score Board
+Find the carefully hidden 'Score Board' page.
+Tutorial
+Code Analysis
+With Coding Challenge
+
+
+XSS
+DOM XSS
+Perform a DOM XSS attack with <iframe src="javascript:alert(`xss`)">.
+Tutorial
+Good for Demos
+With Coding Challenge
+
+
+XSS
+Bonus Payload
+Use the bonus payload <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/771984076&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe> in the DOM XSS challenge.
+Shenanigans
+Tutorial
+With Coding Challenge
+
+Miscellaneous
+Privacy Policy
+Read our privacy policy.
+Good Practice
+Tutorial
+Good for Demos
+Miscellaneous
+Bully Chatbot
+Receive a coupon code from the support chatbot.
+Shenanigans
+Brute Force
+Sensitive Data Exposure
+Confidential Document
+Access a confidential document.
+Good for Demos
+With Coding Challenge
+
+
+Security Misconfiguration
+Error Handling
+Provoke an error that is neither very gracefully nor consistently handled.
+Prerequisite
+
+Sensitive Data Exposure
+Exposed Metrics
+Find the endpoint that serves usage data to be scraped by a popular monitoring system.
+Good Practice
+With Coding Challenge
+
+Miscellaneous
+Mass Dispel
+Close multiple "Challenge solved"-notifications in one go.
+Improper Input Validation
+Missing Encoding
+Retrieve the photo of Bjoern's cat in "melee combat-mode".
+Shenanigans
+Unvalidated Redirects
+Outdated Allowlist
+Let us redirect you to one of our crypto currency addresses which are not promoted any longer.
+Code Analysis
+With Coding Challenge
+
+Improper Input Validation
+Repetitive Registration
+Follow the DRY principle while registering a user.
+Broken Access Control
+Web3 Sandbox
+Find an accidentally deployed code sandbox for writing smart contracts on the fly.
+Web3
+With Coding Challenge
+
+Improper Input Validation
+Zero Stars
+Give a devastating zero-star feedback to the store.
+XSS
+Reflected XSS
+Perform a reflected XSS attack with <iframe src="javascript:alert(`xss`)">.
+Tutorial
+Danger Zone
+Good for Demos
+
+Sensitive Data Exposure
+Exposed credentials
+A developer was careless with hardcoding unused, but still valid credentials for a testing account on the client-side.
+Injection
+Login Admin
+Log in with the administrator's user account.
+Tutorial
+Good for Demos
+With Coding Challenge
+
+
+Broken Access Control
+Admin Section
+Access the administration section of the store.
+Good for Demos
+With Coding Challenge
+
+
+Broken Authentication
+Password Strength
+Log in with the administrator's user credentials without previously changing them or applying SQL Injection.
+Brute Force
+Tutorial
+With Coding Challenge
+
+
+Broken Access Control
+View Basket
+View another user's shopping basket.
+Tutorial
+Good for Demos
+
+Security Misconfiguration
+Deprecated Interface
+Use a deprecated B2B interface that was not properly shut down.
+Contraption
+Prerequisite
+Improper Input Validation
+Empty User Registration
+Register a user with an empty email and password.
+Broken Access Control
+Five-Star Feedback
+Get rid of all 5-star customer feedback.
+
+Sensitive Data Exposure
+Login MC SafeSearch
+Log in with MC SafeSearch's original user credentials without applying SQL Injection or any other bypass.
+Shenanigans
+OSINT
+
+Sensitive Data Exposure
+Meta Geo Stalking
+Determine the answer to John's security question by looking at an upload of him to the Photo Wall and use it to reset his password via the Forgot Password mechanism.
+OSINT
+Sensitive Data Exposure
+NFT Takeover
+Take over the wallet containing our official Soul Bound Token (NFT).
+Contraption
+Good for Demos
+Web3
+With Coding Challenge
+
+Miscellaneous
+Security Policy
+Behave like any "white-hat" should before getting into the action.
+Good Practice
+Sensitive Data Exposure
+Visual Geo Stalking
+Determine the answer to Emma's security question by looking at an upload of her to the Photo Wall and use it to reset her password via the Forgot Password mechanism.
+OSINT
+Cryptographic Issues
+Weird Crypto
+Inform the shop about an algorithm or library it should definitely not use the way it does.
+Broken Access Control
+Forged Feedback
+Post some feedback in another user's name.
+Tutorial
+Injection
+Login Jim
+Log in with Jim's user account.
+Tutorial
+With Coding Challenge
+
+Injection
+Login Bender
+Log in with Bender's user account.
+Tutorial
+With Coding Challenge
+
+
+XSS
+API-only XSS
+Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> without using the frontend application at all.
+Danger Zone
+With Coding Challenge
+
+Improper Input Validation
+Admin Registration
+Register as a user with administrator privileges.
+With Coding Challenge
+
+Broken Authentication
+Bjoern's Favorite Pet
+Reset the password of Bjoern's OWASP account via the Forgot Password mechanism with the original answer to his security question.
+OSINT
+With Coding Challenge
+
+Broken Anti Automation
+CAPTCHA Bypass
+Submit 10 or more customer feedbacks within 20 seconds.
+Brute Force
+Broken Access Control
+CSRF
+Change the name of a user by performing Cross-Site Request Forgery from another origin.
+XSS
+Client-side XSS Protection
+Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> bypassing a client-side security mechanism.
+Danger Zone
+Injection
+Database Schema
+Exfiltrate the entire DB schema definition via SQL Injection.
+With Coding Challenge
+
+Improper Input Validation
+Deluxe Fraud
+Obtain a Deluxe Membership without paying for it.
+Broken Access Control
+Forged Review
+Post a product review as another user or edit any user's existing review.
+With Coding Challenge
+
+Broken Authentication
+GDPR Data Erasure
+Log in with Chris' erased user account.
+Sensitive Data Exposure
+Login Amy
+Log in with Amy's original user credentials. (This could take 93.83 billion trillion trillion centuries to brute force, but luckily she did not read the "One Important Final Note")
+OSINT
+Broken Access Control
+Manipulate Basket
+Put an additional product into another user's shopping basket.
+Improper Input Validation
+Mint the Honey Pot
+Mint the Honey Pot NFT by gathering BEEs from the bee haven.
+Web3
+Internet Traffic
+With Coding Challenge
+
+Improper Input Validation
+Payback Time
+Place an order that makes you rich.
+Security through Obscurity
+Privacy Policy Inspection
+Prove that you actually read our privacy policy.
+Shenanigans
+Good for Demos
+Broken Access Control
+Product Tampering
+Change the href of the link within the OWASP SSL Advanced Forensic Tool (O-Saft) product description into https://owasp.slack.com.
+With Coding Challenge
+
+Broken Authentication
+Reset Jim's Password
+Reset Jim's password via the Forgot Password mechanism with the original answer to his security question.
+OSINT
+With Coding Challenge
+
+
+Miscellaneous
+Security Advisory
+The Juice Shop is susceptible to a known vulnerability in a library, for which an advisory has already been issued, marking the Juice Shop as known affected. A fix is still pending. Inform the shop about a suitable checksum as proof that you did your due diligence.
+Improper Input Validation
+Upload Size
+Upload a file larger than 100 kB.
+Improper Input Validation
+Upload Type
+Upload a file that has no .pdf or .zip extension.
+XXE
+XXE Data Access
+Retrieve the content of C:\Windows\system.ini or /etc/passwd from the server.
+Danger Zone
+Sensitive Data Exposure
+Access Log
+Gain access to any access log file of the server.
+With Coding Challenge
+
+Unvalidated Redirects
+Allowlist Bypass
+Enforce a redirect to a page you are not supposed to redirect to.
+Prerequisite
+With Coding Challenge
+
+XSS
+CSP Bypass
+Bypass the Content Security Policy and perform an XSS attack with <script>alert(`xss`)</script> on a legacy page within the application.
+Danger Zone
+Injection
+Christmas Special
+Order the Christmas special offer of 2014.
+Broken Access Control
+Easter Egg
+Find the hidden easter egg.
+Shenanigans
+Contraption
+Good for Demos
+Injection
+Ephemeral Accountant
+Log in with the (non-existing) accountant acc0unt4nt@juice-sh.op without ever registering that user.
+Improper Input Validation
+Expired Coupon
+Successfully redeem an expired campaign coupon code.
+Sensitive Data Exposure
+Forgotten Developer Backup
+Access a developer's forgotten backup file.
+Contraption
+Good for Demos
+Prerequisite
+
+Sensitive Data Exposure
+Forgotten Sales Backup
+Access a salesman's forgotten backup file.
+Contraption
+Sensitive Data Exposure
+GDPR Data Theft
+Steal someone else's personal data without using Injection.
+XSS
+HTTP-Header XSS
+Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> through an HTTP header.
+Danger Zone
+
+Sensitive Data Exposure
+Leaked Unsafe Product
+Identify an unsafe product that was removed from the shop and inform the shop which ingredients are dangerous.
+Shenanigans
+OSINT
+Vulnerable Components
+Legacy Typosquatting
+Inform the shop about a typosquatting trick it has been a victim of at least in v6.2.0-SNAPSHOT. (Mention the exact name of the culprit)
+Broken Authentication
+Login Bjoern
+Log in with Bjoern's Gmail account without previously changing his password, applying SQL Injection, or hacking his Google account.
+Code Analysis
+Sensitive Data Exposure
+Misplaced Signature File
+Access a misplaced SIEM signature file.
+Good Practice
+Contraption
+Cryptographic Issues
+Nested Easter Egg
+Apply some advanced cryptanalysis to find the real easter egg.
+Shenanigans
+Good for Demos
+Injection
+NoSQL DoS
+Let the server sleep for some time. (It has done more than enough hard work for you)
+Danger Zone
+Injection
+NoSQL Manipulation
+Update multiple product reviews at the same time.
+With Coding Challenge
+
+Improper Input Validation
+Poison Null Byte
+Bypass a security control with a Poison Null Byte to access a file not meant for your eyes.
+Prerequisite
+
+Broken Authentication
+Reset Bender's Password
+Reset Bender's password via the Forgot Password mechanism with the original answer to his security question.
+OSINT
+With Coding Challenge
+
+Sensitive Data Exposure
+Reset Uvogin's Password
+Reset Uvogin's password via the Forgot Password mechanism with the original answer to his security question.
+OSINT
+With Coding Challenge
+
+XSS
+Server-side XSS Protection
+Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> bypassing a server-side security mechanism.
+Danger Zone
+Security through Obscurity
+Steganography
+Rat out a notorious character hiding in plain sight in the shop. (Mention the exact name of the character)
+Shenanigans
+Injection
+User Credentials
+Retrieve a list of all user credentials via SQL Injection.
+With Coding Challenge
+
+Vulnerable Components
+Vulnerable Library
+Inform the shop about a vulnerable library it is using. (Mention the exact library name and version in your comment)
+OSINT
+Security through Obscurity
+Blockchain Hype
+Learn about the Token Sale before its official announcement.
+Contraption
+Code Analysis
+Web3
+With Coding Challenge
+
+Insecure Deserialization
+Blocked RCE DoS
+Perform a Remote Code Execution that would keep a less hardened application busy forever.
+Danger Zone
+Broken Authentication
+Change Bender's Password
+Change Bender's password into slurmCl4ssic without using SQL Injection or Forgot Password.
+Security Misconfiguration
+Cross-Site Imaging
+Stick cute cross-domain kittens all over our delivery boxes.
+Contraption
+Sensitive Data Exposure
+Email Leak
+Perform an unwanted information disclosure by accessing data cross-domain.
+Broken Anti Automation
+Extra Language
+Retrieve the language file that never made it into production.
+Brute Force
+Vulnerable Components
+Frontend Typosquatting
+Inform the shop about a typosquatting imposter that dug itself deep into the frontend. (Mention the exact name of the culprit)
+Vulnerable Components
+Kill Chatbot
+Permanently disable the support chatbot so that it can no longer answer customer queries.
+Code Analysis
+Sensitive Data Exposure
+Leaked API Key
+Inform the shop about a leaked API key. (Mention the exact key in your comment)
+Sensitive Data Exposure
+Leaked Access Logs
+Dumpster dive the Internet for a leaked password and log in to the original user account it belongs to. (Creating a new account with the same password does not qualify as a solution.)
+OSINT
+Vulnerable Components
+Local File Read
+Gain read access to an arbitrary local file on the web server.
+OSINT
+Danger Zone
+Insecure Deserialization
+Memory Bomb
+Drop some explosive data into a vulnerable file-handling endpoint.
+Danger Zone
+Injection
+NoSQL Exfiltration
+All your orders are belong to us! Even the ones which don't.
+Danger Zone
+Broken Authentication
+Reset Bjoern's Password
+Reset the password of Bjoern's internal account via the Forgot Password mechanism with the original answer to his security question.
+OSINT
+With Coding Challenge
+
+Broken Anti Automation
+Reset Morty's Password
+Reset Morty's password via the Forgot Password mechanism with his obfuscated answer to his security question.
+OSINT
+Brute Force
+With Coding Challenge
+
+Sensitive Data Exposure
+Retrieve Blueprint
+Deprive the shop of earnings by downloading the blueprint for one of its products.
+Vulnerable Components
+Supply Chain Attack
+Inform the development team about a danger to some of their credentials. (Send them the URL of the original report or an assigned CVE or another identifier of this vulnerability)
+OSINT
+Broken Authentication
+Two Factor Authentication
+Solve the 2FA challenge for user "wurstbrot". (Disabling, bypassing or overwriting his 2FA settings does not count as a solution)
+Vulnerable Components
+Unsigned JWT
+Forge an essentially unsigned JWT token that impersonates the (non-existing) user jwtn3d@juice-sh.op.
+XXE
+XXE DoS
+Give the server something to chew on for quite a while.
+Danger Zone
+Vulnerable Components
+Arbitrary File Write
+Overwrite the Legal Information file.
+Danger Zone
+Prerequisite
+Cryptographic Issues
+Forged Coupon
+Forge a coupon code that gives you a discount of at least 80%.
+Good for Demos
+Code Analysis
+Vulnerable Components
+Forged Signed JWT
+Forge an almost properly RSA-signed JWT token that impersonates the (non-existing) user rsa_lord@juice-sh.op.
+Cryptographic Issues
+Imaginary Challenge
+Solve challenge #999. Unfortunately, this challenge does not exist.
+Shenanigans
+Code Analysis
+Security Misconfiguration
+Login Support Team
+Log in with the support team's original user credentials without applying SQL Injection or any other bypass.
+Brute Force
+Code Analysis
+Broken Anti Automation
+Multiple Likes
+Like any review at least three times as the same user.
+Cryptographic Issues
+Premium Paywall
+  Unlock Premium Challenge to access exclusive content.
+Shenanigans
+Broken Access Control
+SSRF
+Request a hidden resource on server through server.
+Code Analysis
+Injection
+SSTi
+Infect the server with juicy malware by abusing arbitrary command execution.
+Contraption
+Danger Zone
+Code Analysis
+Insecure Deserialization
+Successful RCE DoS
+Perform a Remote Code Execution that occupies the server for a while without using infinite loops.
+Danger Zone
+XSS
+Video XSS
+Embed an XSS payload </script><script>alert(`xss`)</script> into our promo video.
+Danger Zone
+Miscellaneous
+Wallet Depletion
+Withdraw more ETH from the new wallet than you deposited.
+Web3
+Internet Traffic
+With Coding Challenge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+solved:
+
+Security Misconfiguration
+Error Handling
+Provoke an error that is neither very gracefully nor consistently handled.
+Prerequisite
+
+XSS
+Reflected XSS
+Perform a reflected XSS attack with <iframe src="javascript:alert(`xss`)">.
+Tutorial
+Danger Zone
+Good for Demos
+
+Broken Access Control
+View Basket
+View another user's shopping basket.
+Tutorial
+Good for Demos
+
+Broken Access Control
+Five-Star Feedback
+Get rid of all 5-star customer feedback.
+
+Sensitive Data Exposure
+Login MC SafeSearch
+Log in with MC SafeSearch's original user credentials without applying SQL Injection or any other bypass.
+Shenanigans
+OSINT
+
+Sensitive Data Exposure
+Forgotten Developer Backup
+Access a developer's forgotten backup file.
+Contraption
+Good for Demos
+Prerequisite
+
+XSS
+HTTP-Header XSS
+Perform a persisted XSS attack with <iframe src="javascript:alert(`xss`)"> through an HTTP header.
+Danger Zone
+
+Improper Input Validation
+Poison Null Byte
+Bypass a security control with a Poison Null Byte to access a file not meant for your eyes.
+Prerequisite
+
